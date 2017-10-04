@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<h1>Whisper Example Chat Application</h1>
-		<div v-if="!key">
+		<div v-if="!configured">
 			Key generation password: <input v-model="sympw" @input="updateKey" /><br>
 			username: <input v-model="name" /><br>
 			Key: {{keyEdit}}<br>
@@ -20,40 +20,10 @@
 
 <script>
 import Web3 from 'web3';
+import {decodeFromHex, encodeToHex} from './hexutils';
 
-function decodeFromHex(hex) {
-	if (!hex || hex.length < 4 || hex[0] != "0" || hex[1] != "x" || hex.length % 2 != 0) {
-		console.log(`Invalid hex string: ${hex}`);
-		return "";
-	} else {
-		let result = "";
-
-		for (let i = 2; i<hex.length; i+=2) {
-			let n = parseInt(hex.slice(i, i+2), 16);
-			result += String.fromCharCode(n);
-		}
-
-		try {
-			return JSON.parse(result);
-		} catch (e) {
-			return "Error: message could not be decrypted";
-		}
-	}
-}
-
-function encodeToHex(string) {
-	let hexEncodedMessage = "0x";
-
-	try {
-		for (let c of string) {
-			hexEncodedMessage += c.charCodeAt(0).toString(16);
-		}
-	} catch(e) {
-		
-	}
-
-	return hexEncodedMessage;
-}
+const defaultRecipientPubKey = "0x04ffb2647c10767095de83d45c7c0f780e483fb2221a1431cb97a5c61becd3c22938abfe83dd6706fc1154485b80bc8fcd94aea61bf19dd3206f37d55191b9a9c4";
+const defaultTopic = "0x5a4ea131";
 
 export default {
 	data() {
@@ -65,8 +35,11 @@ export default {
 			text: "",
 			keyEdit: null,
 			key: null,
+			name: "",
 			sympw: "",
-			name: ""
+			configured: false,
+			topic: defaultTopic,
+			recipientPubKey: defaultRecipientPubKey
 		};
 
 		return data;
@@ -81,14 +54,15 @@ export default {
 
 			this.msgs.push(msg);
 
-			this.shh.post({
+			let postData = {
 				ttl: 7,
 				topic: '0x07678231',
 				powTarget: 2.01,
 				powTime: 100,
 				payload: encodeToHex(JSON.stringify(msg)),
-				symKeyID: this.key
-			});
+				postData.symKeyID = this.keyEdit;
+
+			this.shh.post(postData);
 
 			this.text = "";
 		},
@@ -99,22 +73,26 @@ export default {
 
 		configWithKey() {
 			// TODO use a form
-			if (!this.sympw || this.sympw.length == 0) {
-				alert("please enter a pasword to generate a key!");
-				return;
-			}
-
 			if (!this.name || this.name.length == 0) {
 				alert("Please pick a username");
 				return;
 			}
 
-			this.key = this.keyEdit;
-
-			this.msgFilter = this.shh.newMessageFilter({
-				symKeyID: this.key,
+			let filter = {
 				topics: ['0xdeadbeef']
-			}).then(filterId => {
+			};
+				return;
+			}
+
+				if (!this.keyEdit || this.keyEdit.length == 0) {
+					alert("please enter a pasword to generate a key!");
+				return;
+			}
+
+			this.key = this.keyEdit;
+				filter.symKeyID = this.keyEdit;
+
+			this.msgFilter = this.shh.newMessageFilter(filter).then(filterId => {
 				setInterval(() => {
 					this.shh.getFilterMessages(filterId).then(messages => {
 						for (let msg of messages) {
@@ -127,6 +105,8 @@ export default {
 					});
 				}, 1000);
 			});
+
+			this.configured = true;
 		}
 	}
 };
