@@ -3,7 +3,7 @@
 		<h1>Whisper Example Chat Application</h1>
 		<div v-if="!configured">
 			<input type="checkbox" v-model="asym" /> Asymmetric<br>
-			<asymmetric-key-config v-if="asym" pub-key="asymPubKey" key-id="asymKeyId"></asymmetric-key-config>
+			<asymmetric-key-config v-if="asym" :pub-key="asymPubKey" :key-id="asymKeyId"></asymmetric-key-config>
 			<symmetric-key-config v-else @update-sym-key="updateSymKey" :sym-key-id="symKeyId"></symmetric-key-config>
 
 			username: <input v-model="name" /><br>
@@ -11,6 +11,7 @@
 		</div>
 		<div v-else>
 			<div v-if="asym">
+				My publick key: {{asymPubKey}}
 				Recipient's public key: <input  v-model="recipientPubKey" />
 			</div>
 			<div v-else>
