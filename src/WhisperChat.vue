@@ -11,7 +11,7 @@
 		</div>
 		<div v-else>
 			<div v-if="asym">
-				My publick key: {{asymPubKey}}
+				My public key: {{asymPubKey}}
 				Recipient's public key: <input  v-model="recipientPubKey" />
 			</div>
 			<div v-else>
@@ -104,7 +104,7 @@ export default {
 			}
 
 			let filter = {
-				topics: ['0xdeadbeef']
+				topics: ['0xdeadbeef', '0x07678231']
 			};
 
 			if (this.asym) {
