@@ -1,7 +1,7 @@
 {
   "name": "whisper-chat-example",
   "version": "1.0.0",
-  "description": "This example demonstrates how to build a whisper(v5)-based chat.",
+  "description": "This example demonstrates how to build a whisper(v6)-based chat.",
   "main": "index.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack-dev-server --hot"
