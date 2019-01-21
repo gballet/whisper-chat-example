@@ -1,6 +1,6 @@
 # whisper-chat-example
 
-This demonstrates how to use the Ethereum Whisper (v5) API.
+This demonstrates how to use the Ethereum Whisper (v6) API.
 
 ## Running the example
 
