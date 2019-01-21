@@ -75,7 +75,7 @@ export default {
 
 			let postData = {
 				ttl: 7,
-				topic: '0x07678231',
+				topic: this.topic,
 				powTarget: 2.01,
 				powTime: 100,
 				payload: encodeToHex(JSON.stringify(msg)),
@@ -104,7 +104,7 @@ export default {
 			}
 
 			let filter = {
-				topics: ['0xdeadbeef']
+				topics: [this.topic]
 			};
 
 			if (this.asym) {
